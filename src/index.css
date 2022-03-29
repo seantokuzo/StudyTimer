@@ -21,27 +21,29 @@ body {
 
   color: rgba(255, 255, 255, 0.822);
 
-  font-family: 'Teko', 'Press Start 2P', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-    'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Press Start 2P', 'Teko', 'Press Start 2P', -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* font-size: .5rem; */
+  /* font-size: 0.5rem; */
 }
 
-/* .number {
-  font-family: 'Press Start 2P';
-} */
+/* .number { */
+  /* font-family: 'Press Start 2P'; */
+  /* font-family: 'Orbitron'; */
+/* } */
 
 .app-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 
 .title {
   margin: 1rem 0;
-  font-size: 3em;
+  font-size: 2.75em;
 }
 
 .set-timers-div {
@@ -90,33 +92,37 @@ body {
 }
 
 .set-timer-controls-div {
+  width: 100%;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  padding: 0 0 0.5rem;
 
   /* border: 1px solid aqua; */
 }
 
 .timer-value-div {
+  width: 100%;
   background-color: #000000;
   border-radius: 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0;
+  min-height: 3.5rem;
 }
 
 .timer-value {
-  width: 100%;
-  height: 3.5rem;
   font-size: 2.5em;
   margin: 0;
-  overflow: hidden;
-  padding: 0 2rem;
+  /* overflow: hidden; */
 
   /* border: 1px solid aqua; */
 }
 
 .control {
-  margin: 0;
+  margin: 0.25rem 0;
   font-size: 1.75em;
   cursor: pointer;
 }
@@ -127,6 +133,7 @@ body {
 
 /* The slider itself */
 .slider {
+  margin: 1.5rem 0;
   -webkit-appearance: none; /* Override default CSS styles */
   appearance: none;
   width: 100%;
