@@ -1,6 +1,9 @@
 :root {
   --bg1: #31679a;
   --bg2: #3141a0;
+  --bg3: #141d52;
+  --bg4: #36569c;
+  --warning-red: #e7b5b5;
 }
 
 * {
@@ -14,16 +17,21 @@ body {
   display: flex;
   justify-content: center;
 
-  background: linear-gradient(0deg, var(--bg1), 40%, var(--bg2));
+  background: linear-gradient(0deg, var(--bg1), 40%, var(--bg3));
 
-  color: white;
+  color: rgba(255, 255, 255, 0.822);
 
-  font-family: 'Teko', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Teko', 'Press Start 2P', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* font-size: .5rem; */
 }
+
+/* .number {
+  font-family: 'Press Start 2P';
+} */
 
 .app-container {
   display: flex;
@@ -33,17 +41,18 @@ body {
 
 .title {
   margin: 1rem 0;
-  font-size: 3rem;
+  font-size: 3em;
 }
 
 .set-timers-div {
   display: flex;
   align-items: baseline;
 
-  padding: 1em;
+  padding: 0.0525rem;
 
   border: 5px solid rgba(0, 0, 0, 0.3);
   border-radius: 20px;
+  box-shadow: inset 0 0 20px -5px rgba(0, 0, 0, 0.7);
 }
 
 .set-timer-div {
@@ -51,17 +60,33 @@ body {
   flex-direction: column;
   align-items: center;
 
-  padding: 0 2em;
+  margin: 0.125rem;
+  padding: 0.5rem 2rem;
+
+  background-color: var(--bg4);
 
   text-shadow: 0 0 10px #000000;
 
+  border-radius: 20px;
+  box-shadow: 0 0 20px -5px rgba(0, 0, 0, 0.7);
+
   /* border: 1px solid pink; */
+}
+
+.std-break {
+  border-left: 5px solid rgba(0, 0, 0, 0.3);
+  border-right: 2.5px solid rgba(0, 0, 0, 0.3);
+}
+
+.std-study {
+  border-left: 2.5px solid rgba(0, 0, 0, 0.3);
+  border-right: 5px solid rgba(0, 0, 0, 0.3);
 }
 
 .length-label {
   margin: 0;
 
-  font-size: 2rem;
+  font-size: 2em;
 }
 
 .set-timer-controls-div {
@@ -69,13 +94,126 @@ body {
   flex-direction: column;
   align-items: center;
 
+  padding: 0 0 0.5rem;
+
   /* border: 1px solid aqua; */
 }
 
-.timer-value {
-  font-size: 2rem;
-  margin: 0;
+.timer-value-div {
+  background-color: #000000;
+  border-radius: 5px;
 }
+
+.timer-value {
+  width: 100%;
+  height: 3.5rem;
+  font-size: 2.5em;
+  margin: 0;
+  overflow: hidden;
+  padding: 0 2rem;
+
+  /* border: 1px solid aqua; */
+}
+
 .control {
   margin: 0;
+  font-size: 1.75em;
+  cursor: pointer;
+}
+
+.control:hover {
+  color: var(--warning-red);
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none; /* Override default CSS styles */
+  appearance: none;
+  width: 100%;
+  height: 15px;
+  background: rgba(0, 0, 0, 0.5); /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: 0.2s; /* 0.2 seconds transition on hover */
+  transition: opacity 0.2s;
+  border-radius: 3px;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1;
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: var(--bg2); /* Green background */
+  cursor: pointer; /* Cursor on hover */
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  box-shadow: 0 0 10px -2px rgba(255, 255, 255, 0.3);
+}
+
+.slider::-webkit-slider-thumb:active {
+  transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: var(--bg2); /* Green background */
+  cursor: pointer; /* Cursor on hover */
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  box-shadow: 0 0 10px -2px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes inc-num {
+  0% {
+    opacity: 1;
+  }
+  49% {
+    opacity: 0;
+    margin-right: 50px;
+    transform: rotate(-90deg);
+  }
+  50% {
+    opacity: 0;
+    margin-right: -50px;
+    font-size: 0.2em;
+    line-height: 1em;
+  }
+  51% {
+    opacity: 1;
+    transform: rotate(120deg);
+  }
+  100% {
+    margin-right: 0;
+  }
+}
+
+@keyframes dec-num {
+  0% {
+    opacity: 1;
+  }
+  49% {
+    opacity: 0;
+    margin-right: -50px;
+    transform: rotate(120deg);
+  }
+  50% {
+    opacity: 0;
+    margin-right: 50px;
+    font-size: 0.2em;
+  }
+  51% {
+    opacity: 1;
+    transform: rotate(-90deg);
+  }
+  100% {
+    margin-right: 0;
+  }
 }
