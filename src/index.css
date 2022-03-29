@@ -1,5 +1,6 @@
 :root {
-  --default: #2e2e2e;
+  --bg1: #31679a;
+  --bg2: #3141a0;
 }
 
 * {
@@ -8,10 +9,73 @@
 
 body {
   margin: 0;
-  
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+
+  background: linear-gradient(0deg, var(--bg1), 40%, var(--bg2));
+
+  color: white;
+
+  font-family: 'Teko', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  margin: 1rem 0;
+  font-size: 3rem;
+}
+
+.set-timers-div {
+  display: flex;
+  align-items: baseline;
+
+  padding: 1em;
+
+  border: 5px solid rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+}
+
+.set-timer-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 0 2em;
+
+  text-shadow: 0 0 10px #000000;
+
+  /* border: 1px solid pink; */
+}
+
+.length-label {
+  margin: 0;
+
+  font-size: 2rem;
+}
+
+.set-timer-controls-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /* border: 1px solid aqua; */
+}
+
+.timer-value {
+  font-size: 2rem;
+  margin: 0;
+}
+.control {
+  margin: 0;
 }
