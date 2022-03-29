@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import coinSFX from './sounds/smb_coin.m4a'
+import bumpSFX from './sounds/smb_bump.m4a'
 
 function App() {
+  const incrementSound = new Audio(coinSFX)
+  const decrementSound = new Audio(bumpSFX)
   const [breakLength, setBreakLength] = useState(0)
   const [studyLength, setStudyLength] = useState(0)
   const [animateBreak, setAnimateBreak] = useState({ up: false, down: false })
@@ -22,6 +26,7 @@ function App() {
     if (disableButtons) return
     if (breakLength < 60 && breakLength < studyLength) {
       setDisableButtons(true)
+      incrementSound.play()
       setAnimateBreak((prev) => ({
         ...prev,
         up: true
@@ -44,6 +49,7 @@ function App() {
     if (disableButtons) return
     if (breakLength > 1) {
       setDisableButtons(true)
+      decrementSound.play()
       setAnimateBreak((prev) => ({
         ...prev,
         down: true
@@ -66,6 +72,7 @@ function App() {
     if (disableButtons) return
     if (studyLength < 60) {
       setDisableButtons(true)
+      incrementSound.play()
       setAnimateStudy((prev) => ({
         ...prev,
         up: true
@@ -88,6 +95,7 @@ function App() {
     if (disableButtons) return
     if (studyLength > 1) {
       setDisableButtons(true)
+      decrementSound.play()
       setAnimateStudy((prev) => ({
         ...prev,
         down: true
