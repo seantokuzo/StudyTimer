@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import coinSFX from './sounds/smb_coin.m4a'
 import bumpSFX from './sounds/smb_bump.m4a'
+import oneUpSFX from './sounds/smb_1-up.m4a'
+import powerUpSFX from './sounds/smb_powerup.m4a'
 
 function App() {
   const incrementSound = new Audio(coinSFX)
   const decrementSound = new Audio(bumpSFX)
+  const switchToBreakSound = new Audio(oneUpSFX)
+  const switchToStudySound = new Audio(powerUpSFX)
   const [breakLength, setBreakLength] = useState(0)
   const [studyLength, setStudyLength] = useState(0)
   const [animateBreak, setAnimateBreak] = useState({ up: false, down: false })
   const [animateStudy, setAnimateStudy] = useState({ up: false, down: false })
   const [disableButtons, setDisableButtons] = useState(false)
+  const [timeLeft, setTimeLeft] = useState({ min: 0, sec: 0 })
+  const [isBreak, setIsBreak] = useState(false)
+  const [timerActive, setTimerActive] = useState(false)
+
+  console.log(timeLeft)
 
   useEffect(() => {
     setBreakLength(5)
@@ -20,7 +29,41 @@ function App() {
     if (breakLength > studyLength) {
       setBreakLength(studyLength)
     }
-  }, [studyLength, breakLength])
+    if (isBreak) {
+      setTimeLeft({ min: breakLength, sec: 0 })
+      return
+    } else {
+      setTimeLeft({ min: studyLength, sec: 0 })
+    }
+  }, [studyLength, breakLength, isBreak])
+
+  function timeLeftToString(num) {
+    let numString = ''
+    if (num < 10) {
+      numString = `0${num}`
+    } else {
+      numString = `${num}`
+    }
+    return numString
+  }
+
+  const timerHtml = (
+    <div className="timer-div">
+      <div className="timer-inner-div">
+        <h1 className="timer-title" id="timer-label">
+          {isBreak ? 'BREAK TIME' : 'STUDY TIME'}
+        </h1>
+        <h5 className="timer-phrase">
+          {isBreak ? 'TAKE A LOAD OFF' : "LET'S GET IT!"}
+        </h5>
+        <div className="the-timer-screen">
+          <h2 className="the-timer-el" id="time-left">
+            {timeLeftToString(timeLeft.min)}:{timeLeftToString(timeLeft.sec)}
+          </h2>
+        </div>
+      </div>
+    </div>
+  )
 
   function incrementBreak() {
     if (disableButtons) return
@@ -131,7 +174,6 @@ function App() {
   }
 
   function handleBreakSlider(e) {
-    console.log(e)
     setBreakLength(e.target.value)
   }
 
@@ -141,11 +183,24 @@ function App() {
         Break Length
       </h4>
       <div className="set-timer-controls-div">
-        <i
-          id="break-increment"
-          className="fa-solid fa-angle-up control"
-          onClick={incrementBreak}
-        ></i>
+        <div className="btns-div">
+          <div className="button-div green-btn-out" onClick={incrementBreak}>
+            <div className="button-inner-div green-btn-in">
+              <i
+                id="break-increment"
+                className="fa-solid fa-angle-up btn-icon"
+              ></i>
+            </div>
+          </div>
+          <div className="button-div blue-btn-out" onClick={decrementBreak}>
+            <div className="button-inner-div blue-btn-in">
+              <i
+                id="break-decrement"
+                className="fa-solid fa-angle-down btn-icon"
+              ></i>
+            </div>
+          </div>
+        </div>
         <div className="timer-value-div">
           <h3
             id="break-length"
@@ -155,11 +210,6 @@ function App() {
             {breakLength}
           </h3>
         </div>
-        <i
-          id="break-decrement"
-          className="fa-solid fa-angle-down control"
-          onClick={decrementBreak}
-        ></i>
       </div>
       <input
         type="range"
@@ -175,7 +225,6 @@ function App() {
   )
 
   function handleStudySlider(e) {
-    console.log(e)
     setStudyLength(e.target.value)
   }
 
@@ -185,11 +234,24 @@ function App() {
         Study Length
       </h4>
       <div className="set-timer-controls-div">
-        <i
-          id="session-increment"
-          className="fa-solid fa-angle-up control"
-          onClick={incrementStudy}
-        ></i>
+        <div className="btns-div">
+          <div className="button-div yellow-btn-out" onClick={incrementStudy}>
+            <div className="button-inner-div yellow-btn-in">
+              <i
+                id="session-increment"
+                className="fa-solid fa-angle-up btn-icon"
+              ></i>
+            </div>
+          </div>
+          <div className="button-div orange-btn-out" onClick={decrementStudy}>
+            <div className="button-inner-div orange-btn-in">
+              <i
+                id="session-decrement"
+                className="fa-solid fa-angle-down btn-icon"
+              ></i>
+            </div>
+          </div>
+        </div>
         <div className="timer-value-div">
           <h3
             id="session-length"
@@ -199,11 +261,6 @@ function App() {
             {studyLength}
           </h3>
         </div>
-        <i
-          id="session-decrement"
-          className="fa-solid fa-angle-down control"
-          onClick={decrementStudy}
-        ></i>
       </div>
       <input
         type="range"
@@ -225,10 +282,90 @@ function App() {
     </div>
   )
 
+  function switchSessionType() {
+    if (!isBreak) switchToBreakSound.play()
+    if (isBreak) switchToStudySound.play()
+
+    setIsBreak(!isBreak)
+  }
+
+  const sessionSwitchButton = (
+    <div className="sesh-switch-div">
+      <div className="button-div red-btn-out" onClick={switchSessionType}>
+        <div className="button-inner-div red-btn-in">
+          <i className="fa-solid fa-shuffle switch-icon"></i>
+        </div>
+      </div>
+      <p className="sesh-switch-phrase">
+        {isBreak ? 'Switch to study session' : 'Switch to break time'}
+      </p>
+    </div>
+  )
+
+  const playOrPause = timerActive ? (
+    <i className="fa-solid fa-pause btn-icon"></i>
+  ) : (
+    <i className="fa-solid fa-play btn-icon"></i>
+  )
+
+  function handlePlayPause() {
+    console.log('play/pause')
+    let timeLeftMS = timeLeft.min * 60 * 1000 + timeLeft.sec * 1000
+    const tickTock = setInterval(() => {
+      if (timeLeft.min === 0 && timeLeft.sec === 0) {
+        clearInterval(tickTock)
+      } else if (timeLeft.sec === 0) {
+        setTimeLeft((prevTimeLeft) => ({
+          min: prevTimeLeft.min - 1,
+          sec: 59
+        }))
+      } else {
+        setTimeLeft((prevTimeLeft) => ({
+          min: prevTimeLeft.min,
+          sec: prevTimeLeft.sec - 1
+        }))
+      }
+    }, 1000)
+    if (!timerActive) {
+      setTimerActive(true)
+      setTimeout(() => {
+        tickTock()
+      }, timeLeftMS)
+    } else if (timerActive) {
+      clearInterval(tickTock)
+    }
+  }
+
+  function handleRestartTimer() {
+    console.log('restart timer')
+  }
+
+  const timerControls = (
+    <div className="timer-controls-div">
+      <div
+        className="button-div grey-btn-out timer-btn"
+        onClick={handlePlayPause}
+      >
+        <div className="button-inner-div grey-btn-in">{playOrPause}</div>
+      </div>
+      <div
+        className="button-div grey-btn-out timer-btn"
+        onClick={handleRestartTimer}
+      >
+        <div className="button-inner-div grey-btn-in">
+          <i className="fa-solid fa-arrow-rotate-left btn-icon"></i>
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <div className="app-container">
       <h1 className="title">Study Session Timer</h1>
+      {sessionSwitchButton}
       {setTimers}
+      {timerHtml}
+      {timerControls}
     </div>
   )
 }
