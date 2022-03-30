@@ -3,12 +3,15 @@ import coinSFX from './sounds/smb_coin.m4a'
 import bumpSFX from './sounds/smb_bump.m4a'
 import oneUpSFX from './sounds/smb_1-up.m4a'
 import powerUpSFX from './sounds/smb_powerup.m4a'
+import warningSFX from './sounds/smb_warning.m4a'
+import accurateInterval from './accurateInterval'
 
 function App() {
   const incrementSound = new Audio(coinSFX)
   const decrementSound = new Audio(bumpSFX)
   const switchToBreakSound = new Audio(oneUpSFX)
   const switchToStudySound = new Audio(powerUpSFX)
+  const warningSound = new Audio(warningSFX)
   const [breakLength, setBreakLength] = useState(0)
   const [studyLength, setStudyLength] = useState(0)
   const [animateBreak, setAnimateBreak] = useState({ up: false, down: false })
@@ -17,12 +20,11 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(0)
   const [isBreak, setIsBreak] = useState(false)
   const [timerActive, setTimerActive] = useState(false)
-
-  console.log(timeLeft)
+  const [myInterval, setMyInterval] = useState('')
 
   useEffect(() => {
-    setBreakLength(5)
-    setStudyLength(25)
+    setBreakLength(0.1)
+    setStudyLength(0.25)
   }, [])
 
   useEffect(() => {
@@ -279,45 +281,107 @@ function App() {
   ) : (
     <i className="fa-solid fa-play btn-icon"></i>
   )
-  let tickTock
+
+  useEffect(() => {
+    console.log('checking')
+    console.log(timeLeft)
+    if (timeLeft === 60 && timerActive) {
+      warningSound.play()
+    }
+    // this.warning(timer)
+    // this.buzzer(timer)
+    if (timeLeft < 0) {
+      if (myInterval) {
+        myInterval.cancel()
+      }
+      if (isBreak) {
+        setTimeLeft(studyLength * 60)
+      } else {
+        setTimeLeft(breakLength * 60)
+      }
+      startTimer()
+      setIsBreak((prevIsBreak) => !prevIsBreak)
+    }
+  }, [timeLeft])
+
+  // function checkTimerStatus() {
+  //   let timer = timeLeft
+  //   console.log('checking')
+  //   console.log(timeLeft)
+  //   // this.warning(timer)
+  //   // this.buzzer(timer)
+  //   if (timer < 0) {
+  //     if (myInterval) {
+  //       myInterval.cancel()
+  //     }
+  //     if (isBreak) {
+  //       setTimeLeft(studyLength * 60)
+  //     } else {
+  //       setTimeLeft(breakLength * 60)
+  //     }
+  //     startTimer()
+  //     setIsBreak(!isBreak)
+  //   }
+  // }
+
+  function decrementTimeLeft() {
+    setTimeLeft((prevTimeLeft) => prevTimeLeft - 1)
+  }
+
+  function startTimer() {
+    setMyInterval(
+      accurateInterval(() => {
+        decrementTimeLeft()
+        // checkTimerStatus()
+      }, 1000)
+    )
+  }
 
   function handlePlayPause() {
     console.log(timerActive)
     if (!timerActive) {
       setTimerActive(true)
-      tickTock = setInterval(() => {
-        if (timeLeft < 0) {
-          clearTimeout(tickTock)
-        } else {
-          setTimeLeft((prevTimeLeft) => prevTimeLeft - 1)
-        }
-      }, 1000)
+      startTimer()
       return
     } else {
       setTimerActive(false)
-      clearInterval(tickTock)
-      tickTock = null
+      if (myInterval) {
+        myInterval.cancel()
+      }
     }
   }
 
   function handleRestartTimer() {
     console.log('restart timer')
+    setTimerActive(false)
+    if (myInterval) {
+      myInterval.cancel()
+    }
+    if (isBreak) {
+      setTimeLeft(breakLength * 60)
+    } else {
+      setTimeLeft(studyLength * 60)
+    }
   }
 
   function timeLeftToMinutes(time) {
     const minutes = Math.floor(time / 60)
-    console.log(minutes)
     if (minutes < 10) {
       return `0${minutes}`
     } else return minutes
   }
 
   function timeLeftToSeconds(time) {
-    const minuteFraction = time / 60 - Math.floor(time / 60)
-    let seconds = Math.floor(minuteFraction * 60)
+    const minutes = Math.floor(time / 60)
+    let seconds = time - minutes * 60
+    // console.log(seconds)
     if (seconds < 10) {
       return `0${seconds}`
     } else return seconds
+  }
+
+  const warningStyle = {
+    color: timeLeft < 60 ? 'var(--warning-red)' : 'white'
   }
 
   const timerHtml = (
@@ -330,7 +394,7 @@ function App() {
           {isBreak ? 'TAKE A LOAD OFF' : "LET'S GET IT!"}
         </h5>
         <div className="the-timer-screen">
-          <h2 className="the-timer-el" id="time-left">
+          <h2 className="the-timer-el" id="time-left" style={warningStyle}>
             {timeLeftToMinutes(timeLeft)}:{timeLeftToSeconds(timeLeft)}
           </h2>
         </div>
