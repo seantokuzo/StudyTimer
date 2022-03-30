@@ -3,7 +3,7 @@ import oneUpSFX from './sounds/smb_1-up.m4a'
 import bumpSFX from './sounds/smb_bump.m4a'
 import coinSFX from './sounds/smb_coin.m4a'
 import restartSFX from './sounds/smb_flagpole.m4a'
-import breakOverSFX from './sounds/smb_gameover.m4a'
+// import breakOverSFX from './sounds/smb_gameover.m4a'
 import startBreakSFX from './sounds/smb_jump-super.m4a'
 import pauseSFX from './sounds/smb_pause.m4a'
 import startStudySFX from './sounds/smb_pipe.m4a'
@@ -20,9 +20,9 @@ function App() {
   const warningSound = new Audio(warningSFX)
   const pauseSound = new Audio(pauseSFX)
   const restartSound = new Audio(restartSFX)
-  const breakOverSound = new Audio(breakOverSFX)
+  // const breakOverSound = new Audio(breakOverSFX)
   const studyOverSound = new Audio(studyOverSFX)
-  // studyOverSound.attributes.id = 'beep'
+  studyOverSound.attributes.id = 'beep'
   const startBreakSound = new Audio(startBreakSFX)
   const startStudySound = new Audio(startStudySFX)
   const [breakLength, setBreakLength] = useState(0)
@@ -36,8 +36,8 @@ function App() {
   const [myInterval, setMyInterval] = useState('')
 
   useEffect(() => {
-    setBreakLength(0.1)
-    setStudyLength(0.1)
+    setBreakLength(5)
+    setStudyLength(25)
   }, [])
 
   useEffect(() => {
@@ -53,7 +53,7 @@ function App() {
   }, [studyLength, breakLength, isBreak])
 
   function incrementBreak() {
-    if (disableButtons) return
+    if (disableButtons || timerActive) return
     if (breakLength < 60 && breakLength < studyLength) {
       setDisableButtons(true)
       incrementSound.play()
@@ -76,7 +76,7 @@ function App() {
   }
 
   function decrementBreak() {
-    if (disableButtons) return
+    if (disableButtons || timerActive) return
     if (breakLength > 1) {
       setDisableButtons(true)
       decrementSound.play()
@@ -99,7 +99,7 @@ function App() {
   }
 
   function incrementStudy() {
-    if (disableButtons) return
+    if (disableButtons || timerActive) return
     if (studyLength < 60) {
       setDisableButtons(true)
       incrementSound.play()
@@ -122,7 +122,7 @@ function App() {
   }
 
   function decrementStudy() {
-    if (disableButtons) return
+    if (disableButtons || timerActive) return
     if (studyLength > 1) {
       setDisableButtons(true)
       decrementSound.play()
@@ -178,7 +178,7 @@ function App() {
           className="slider"
           id="myRange"
           onChange={handleBreakSlider}
-          disabled={disableButtons ? true : false}
+          disabled={disableButtons || timerActive ? true : false}
         />
         <div className="timer-value-div">
           <h3
@@ -229,7 +229,7 @@ function App() {
           className="slider"
           id="myRange"
           onChange={handleStudySlider}
-          disabled={disableButtons ? true : false}
+          disabled={disableButtons || timerActive ? true : false}
         />
         <div className="timer-value-div">
           <h3
@@ -307,12 +307,11 @@ function App() {
       if (myInterval) {
         myInterval.cancel()
       }
+      studyOverSound.play()
       if (isBreak) {
         setTimeLeft(studyLength * 60)
-        breakOverSound.play()
       } else {
         setTimeLeft(breakLength * 60)
-        studyOverSound.play()
       }
       startTimer()
       setIsBreak((prevIsBreak) => !prevIsBreak)
