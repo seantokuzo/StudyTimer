@@ -3,7 +3,7 @@ import oneUpSFX from './sounds/smb_1-up.m4a'
 import bumpSFX from './sounds/smb_bump.m4a'
 import coinSFX from './sounds/smb_coin.m4a'
 import restartSFX from './sounds/smb_flagpole.m4a'
-// import breakOverSFX from './sounds/smb_gameover.m4a'
+import breakOverSFX from './sounds/smb_gameover.m4a'
 import startBreakSFX from './sounds/smb_jump-super.m4a'
 import pauseSFX from './sounds/smb_pause.m4a'
 import startStudySFX from './sounds/smb_pipe.m4a'
@@ -20,13 +20,12 @@ function App() {
   const warningSound = new Audio(warningSFX)
   const pauseSound = new Audio(pauseSFX)
   const restartSound = new Audio(restartSFX)
-  // const breakOverSound = new Audio(breakOverSFX)
+  const breakOverSound = new Audio(breakOverSFX)
   const studyOverSound = new Audio(studyOverSFX)
-  studyOverSound.attributes.id = 'beep'
   const startBreakSound = new Audio(startBreakSFX)
   const startStudySound = new Audio(startStudySFX)
-  const [breakLength, setBreakLength] = useState(0)
-  const [studyLength, setStudyLength] = useState(0)
+  const [breakLength, setBreakLength] = useState(5)
+  const [studyLength, setStudyLength] = useState(25)
   const [animateBreak, setAnimateBreak] = useState({ up: false, down: false })
   const [animateStudy, setAnimateStudy] = useState({ up: false, down: false })
   const [disableButtons, setDisableButtons] = useState(false)
@@ -35,11 +34,8 @@ function App() {
   const [timerActive, setTimerActive] = useState(false)
   const [myInterval, setMyInterval] = useState('')
 
-  useEffect(() => {
-    setBreakLength(5)
-    setStudyLength(25)
-  }, [])
-
+  // BREAK LENGTH MUST BE LESS THAT STUDY LENGTH
+  // SWITCH TIME LEFT FROM BREAK/STUDY ON SESSION SWITCH
   useEffect(() => {
     if (breakLength > studyLength) {
       setBreakLength(studyLength)
@@ -217,9 +213,7 @@ function App() {
 
   const setStudyTimerHtml = (
     <div className="set-timer-div std-study">
-      <h4 className="length-label" id="session-label">
-        Study Length
-      </h4>
+      <h4 className="length-label">Study Length</h4>
       <div className="set-timer-controls-div">
         <input
           type="range"
@@ -232,11 +226,7 @@ function App() {
           disabled={disableButtons || timerActive ? true : false}
         />
         <div className="timer-value-div">
-          <h3
-            id="session-length"
-            className="timer-value number"
-            style={studyAnimation}
-          >
+          <h3 className="timer-value number" style={studyAnimation}>
             {studyLength}
           </h3>
         </div>
@@ -296,8 +286,6 @@ function App() {
   )
 
   useEffect(() => {
-    console.log('checking')
-    console.log(timeLeft)
     if (timeLeft === 59 && timerActive) {
       warningSound.play()
     }
@@ -307,10 +295,11 @@ function App() {
       if (myInterval) {
         myInterval.cancel()
       }
-      studyOverSound.play()
       if (isBreak) {
+        breakOverSound.play()
         setTimeLeft(studyLength * 60)
       } else {
+        studyOverSound.play()
         setTimeLeft(breakLength * 60)
       }
       startTimer()
@@ -319,22 +308,22 @@ function App() {
   }, [timeLeft])
 
   // function checkTimerStatus() {
-  //   let timer = timeLeft
-  //   console.log('checking')
-  //   console.log(timeLeft)
-  //   // this.warning(timer)
-  //   // this.buzzer(timer)
-  //   if (timer < 0) {
+  //   if (timeLeft === 59 && timerActive) {
+  //     warningSound.play()
+  //   }
+  //   if (timeLeft < 0) {
   //     if (myInterval) {
   //       myInterval.cancel()
   //     }
   //     if (isBreak) {
+  //       breakOverSound.play()
   //       setTimeLeft(studyLength * 60)
   //     } else {
+  //       studyOverSound.play()
   //       setTimeLeft(breakLength * 60)
   //     }
   //     startTimer()
-  //     setIsBreak(!isBreak)
+  //     setIsBreak((prevIsBreak) => !prevIsBreak)
   //   }
   // }
 
@@ -347,12 +336,12 @@ function App() {
       accurateInterval(() => {
         decrementTimeLeft()
         // checkTimerStatus()
-      }, 1000)
+      }, 10)
     )
   }
 
   function handlePlayPause() {
-    console.log(timerActive)
+    // console.log(timerActive)
     if (!timerActive) {
       setTimerActive(true)
       if (isBreak) {
@@ -372,7 +361,7 @@ function App() {
   }
 
   function handleRestartTimer() {
-    console.log('restart timer')
+    // console.log('restart timer')
     setTimerActive(false)
     restartSound.play()
     if (myInterval) {
@@ -457,19 +446,29 @@ function App() {
 
 export default App
 
-// const myFonts = [
-//   'Righteous',
-//   'Press Start 2P',
-//   'Orbitron',
-//   'Qahiri',
-//   'Teko',
-//   'Segoe UI',
-//   'Roboto',
-//   'Oxygen',
-//   'Ubuntu',
-//   'Cantarell',
-//   'Fira Sans',
-//   'Droid Sans',
-//   'Helvetica Neue',
-//   'sans-serif'
-// ]
+
+  // SET BREAK AND STUDY LENGTH TO LOCAL STORAGE
+  // useEffect(() => {
+  //   localStorage.setItem('breakLength', JSON.stringify(breakLength))
+  // }, [breakLength])
+  // useEffect(() => {
+  //   localStorage.setItem('studyLength', JSON.stringify(studyLength))
+  // }, [studyLength])
+
+  // IF IN LOCAL STORAGE, GET AND SET BREAK AND STUDY LENGTHS
+  // useEffect(() => {
+  //   const localBreakLength = JSON.parse(localStorage.getItem('breakLength'))
+  //   const localStudyLength = JSON.parse(localStorage.getItem('studyLength'))
+  //   if (localBreakLength) {
+  //     setBreakLength(localBreakLength)
+  //   }
+  //   if (localStudyLength) {
+  //     setStudyLength(localStudyLength)
+  //   }
+  //   if (!localBreakLength) {
+  //     setBreakLength(5)
+  //   }
+  //   if (!localStudyLength) {
+  //     setStudyLength(25)
+  //   }
+  // }, [])
