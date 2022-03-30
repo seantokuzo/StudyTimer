@@ -174,7 +174,7 @@ function App() {
   }
 
   function handleBreakSlider(e) {
-    setBreakLength(e.target.value)
+    setBreakLength(parseInt(e.target.value, 10))
   }
 
   const setBreakTimerHtml = (
@@ -183,6 +183,25 @@ function App() {
         Break Length
       </h4>
       <div className="set-timer-controls-div">
+        <input
+          type="range"
+          min="1"
+          max={studyLength}
+          value={breakLength}
+          className="slider"
+          id="myRange"
+          onChange={handleBreakSlider}
+          disabled={disableButtons ? true : false}
+        />
+        <div className="timer-value-div">
+          <h3
+            id="break-length"
+            className="timer-value number"
+            style={breakAnimation}
+          >
+            {breakLength}
+          </h3>
+        </div>
         <div className="btns-div">
           <div className="button-div green-btn-out" onClick={incrementBreak}>
             <div className="button-inner-div green-btn-in">
@@ -201,31 +220,12 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="timer-value-div">
-          <h3
-            id="break-length"
-            className="timer-value number"
-            style={breakAnimation}
-          >
-            {breakLength}
-          </h3>
-        </div>
       </div>
-      <input
-        type="range"
-        min="1"
-        max={studyLength}
-        value={breakLength}
-        className="slider"
-        id="myRange"
-        onChange={handleBreakSlider}
-        disabled={disableButtons ? true : false}
-      />
     </div>
   )
 
   function handleStudySlider(e) {
-    setStudyLength(e.target.value)
+    setStudyLength(parseInt(e.target.value, 10))
   }
 
   const setStudyTimerHtml = (
@@ -234,6 +234,25 @@ function App() {
         Study Length
       </h4>
       <div className="set-timer-controls-div">
+        <input
+          type="range"
+          min="1"
+          max="60"
+          value={studyLength}
+          className="slider"
+          id="myRange"
+          onChange={handleStudySlider}
+          disabled={disableButtons ? true : false}
+        />
+        <div className="timer-value-div">
+          <h3
+            id="session-length"
+            className="timer-value number"
+            style={studyAnimation}
+          >
+            {studyLength}
+          </h3>
+        </div>
         <div className="btns-div">
           <div className="button-div yellow-btn-out" onClick={incrementStudy}>
             <div className="button-inner-div yellow-btn-in">
@@ -252,26 +271,7 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="timer-value-div">
-          <h3
-            id="session-length"
-            className="timer-value number"
-            style={studyAnimation}
-          >
-            {studyLength}
-          </h3>
-        </div>
       </div>
-      <input
-        type="range"
-        min="1"
-        max="60"
-        value={studyLength}
-        className="slider"
-        id="myRange"
-        onChange={handleStudySlider}
-        disabled={disableButtons ? true : false}
-      />
     </div>
   )
 
@@ -363,9 +363,9 @@ function App() {
     <div className="app-container">
       <h1 className="title">Study Session Timer</h1>
       {sessionSwitchButton}
-      {setTimers}
       {timerHtml}
       {timerControls}
+      {setTimers}
     </div>
   )
 }
