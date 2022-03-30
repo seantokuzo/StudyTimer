@@ -14,7 +14,7 @@ function App() {
   const [animateBreak, setAnimateBreak] = useState({ up: false, down: false })
   const [animateStudy, setAnimateStudy] = useState({ up: false, down: false })
   const [disableButtons, setDisableButtons] = useState(false)
-  const [timeLeft, setTimeLeft] = useState({ min: 0, sec: 0 })
+  const [timeLeft, setTimeLeft] = useState(0)
   const [isBreak, setIsBreak] = useState(false)
   const [timerActive, setTimerActive] = useState(false)
 
@@ -30,40 +30,12 @@ function App() {
       setBreakLength(studyLength)
     }
     if (isBreak) {
-      setTimeLeft({ min: breakLength, sec: 0 })
+      setTimeLeft(breakLength * 60)
       return
     } else {
-      setTimeLeft({ min: studyLength, sec: 0 })
+      setTimeLeft(studyLength * 60)
     }
   }, [studyLength, breakLength, isBreak])
-
-  function timeLeftToString(num) {
-    let numString = ''
-    if (num < 10) {
-      numString = `0${num}`
-    } else {
-      numString = `${num}`
-    }
-    return numString
-  }
-
-  const timerHtml = (
-    <div className="timer-div">
-      <div className="timer-inner-div">
-        <h1 className="timer-title" id="timer-label">
-          {isBreak ? 'BREAK TIME' : 'STUDY TIME'}
-        </h1>
-        <h5 className="timer-phrase">
-          {isBreak ? 'TAKE A LOAD OFF' : "LET'S GET IT!"}
-        </h5>
-        <div className="the-timer-screen">
-          <h2 className="the-timer-el" id="time-left">
-            {timeLeftToString(timeLeft.min)}:{timeLeftToString(timeLeft.sec)}
-          </h2>
-        </div>
-      </div>
-    </div>
-  )
 
   function incrementBreak() {
     if (disableButtons) return
@@ -307,38 +279,64 @@ function App() {
   ) : (
     <i className="fa-solid fa-play btn-icon"></i>
   )
+  let tickTock
 
   function handlePlayPause() {
-    console.log('play/pause')
-    let timeLeftMS = timeLeft.min * 60 * 1000 + timeLeft.sec * 1000
-    const tickTock = setInterval(() => {
-      if (timeLeft.min === 0 && timeLeft.sec === 0) {
-        clearInterval(tickTock)
-      } else if (timeLeft.sec === 0) {
-        setTimeLeft((prevTimeLeft) => ({
-          min: prevTimeLeft.min - 1,
-          sec: 59
-        }))
-      } else {
-        setTimeLeft((prevTimeLeft) => ({
-          min: prevTimeLeft.min,
-          sec: prevTimeLeft.sec - 1
-        }))
-      }
-    }, 1000)
+    console.log(timerActive)
     if (!timerActive) {
       setTimerActive(true)
-      setTimeout(() => {
-        tickTock()
-      }, timeLeftMS)
-    } else if (timerActive) {
+      tickTock = setInterval(() => {
+        if (timeLeft < 0) {
+          clearTimeout(tickTock)
+        } else {
+          setTimeLeft((prevTimeLeft) => prevTimeLeft - 1)
+        }
+      }, 1000)
+      return
+    } else {
+      setTimerActive(false)
       clearInterval(tickTock)
+      tickTock = null
     }
   }
 
   function handleRestartTimer() {
     console.log('restart timer')
   }
+
+  function timeLeftToMinutes(time) {
+    const minutes = Math.floor(time / 60)
+    console.log(minutes)
+    if (minutes < 10) {
+      return `0${minutes}`
+    } else return minutes
+  }
+
+  function timeLeftToSeconds(time) {
+    const minuteFraction = time / 60 - Math.floor(time / 60)
+    let seconds = Math.floor(minuteFraction * 60)
+    if (seconds < 10) {
+      return `0${seconds}`
+    } else return seconds
+  }
+
+  const timerHtml = (
+    <div className="timer-div">
+      <div className="timer-inner-div">
+        <h1 className="timer-title" id="timer-label">
+          {isBreak ? 'BREAK TIME' : 'STUDY TIME'}
+        </h1>
+        <h5 className="timer-phrase">
+          {isBreak ? 'TAKE A LOAD OFF' : "LET'S GET IT!"}
+        </h5>
+        <div className="the-timer-screen">
+          <h2 className="the-timer-el" id="time-left">
+            {timeLeftToMinutes(timeLeft)}:{timeLeftToSeconds(timeLeft)}
+          </h2>
+        </div>
+      </div>
+    </div>
+  )
 
   const timerControls = (
     <div className="timer-controls-div">

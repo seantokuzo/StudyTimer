@@ -35,6 +35,7 @@ body {
 /* } */
 
 .app-container {
+  width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -163,8 +164,10 @@ body {
 }
 
 .set-timers-div {
+  width: 100%;
   display: flex;
   align-items: baseline;
+  justify-content: space-around;
 
   /* border: 5px solid rgba(0, 0, 0, 0.3); */
   /* border-radius: 20px; */
@@ -375,11 +378,11 @@ body {
 
 .the-timer-el {
   margin: 0;
-  font-size: 5em;
+  font-size: 4em;
 }
 
 .timer-controls-div {
-  margin-top: 1.5rem;
+  margin: 1.5rem 0;
   display: flex;
 }
 
