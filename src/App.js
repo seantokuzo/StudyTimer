@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import coinSFX from './sounds/smb_coin.m4a'
-import bumpSFX from './sounds/smb_bump.m4a'
 import oneUpSFX from './sounds/smb_1-up.m4a'
+import bumpSFX from './sounds/smb_bump.m4a'
+import coinSFX from './sounds/smb_coin.m4a'
+import restartSFX from './sounds/smb_flagpole.m4a'
+import breakOverSFX from './sounds/smb_gameover.m4a'
+import startBreakSFX from './sounds/smb_jump-super.m4a'
+import pauseSFX from './sounds/smb_pause.m4a'
+import startStudySFX from './sounds/smb_pipe.m4a'
 import powerUpSFX from './sounds/smb_powerup.m4a'
+import studyOverSFX from './sounds/smb_stage_clear.m4a'
 import warningSFX from './sounds/smb_warning.m4a'
 import accurateInterval from './accurateInterval'
 
@@ -12,6 +18,13 @@ function App() {
   const switchToBreakSound = new Audio(oneUpSFX)
   const switchToStudySound = new Audio(powerUpSFX)
   const warningSound = new Audio(warningSFX)
+  const pauseSound = new Audio(pauseSFX)
+  const restartSound = new Audio(restartSFX)
+  const breakOverSound = new Audio(breakOverSFX)
+  const studyOverSound = new Audio(studyOverSFX)
+  // studyOverSound.attributes.id = 'beep'
+  const startBreakSound = new Audio(startBreakSFX)
+  const startStudySound = new Audio(startStudySFX)
   const [breakLength, setBreakLength] = useState(0)
   const [studyLength, setStudyLength] = useState(0)
   const [animateBreak, setAnimateBreak] = useState({ up: false, down: false })
@@ -24,7 +37,7 @@ function App() {
 
   useEffect(() => {
     setBreakLength(0.1)
-    setStudyLength(0.25)
+    setStudyLength(0.1)
   }, [])
 
   useEffect(() => {
@@ -285,7 +298,7 @@ function App() {
   useEffect(() => {
     console.log('checking')
     console.log(timeLeft)
-    if (timeLeft === 60 && timerActive) {
+    if (timeLeft === 59 && timerActive) {
       warningSound.play()
     }
     // this.warning(timer)
@@ -296,8 +309,10 @@ function App() {
       }
       if (isBreak) {
         setTimeLeft(studyLength * 60)
+        breakOverSound.play()
       } else {
         setTimeLeft(breakLength * 60)
+        studyOverSound.play()
       }
       startTimer()
       setIsBreak((prevIsBreak) => !prevIsBreak)
@@ -341,10 +356,16 @@ function App() {
     console.log(timerActive)
     if (!timerActive) {
       setTimerActive(true)
+      if (isBreak) {
+        startBreakSound.play()
+      } else {
+        startStudySound.play()
+      }
       startTimer()
       return
     } else {
       setTimerActive(false)
+      pauseSound.play()
       if (myInterval) {
         myInterval.cancel()
       }
@@ -354,6 +375,7 @@ function App() {
   function handleRestartTimer() {
     console.log('restart timer')
     setTimerActive(false)
+    restartSound.play()
     if (myInterval) {
       myInterval.cancel()
     }
@@ -406,12 +428,14 @@ function App() {
     <div className="timer-controls-div">
       <div
         className="button-div grey-btn-out timer-btn"
+        id="start_stop"
         onClick={handlePlayPause}
       >
         <div className="button-inner-div grey-btn-in">{playOrPause}</div>
       </div>
       <div
         className="button-div grey-btn-out timer-btn"
+        id="reset"
         onClick={handleRestartTimer}
       >
         <div className="button-inner-div grey-btn-in">
