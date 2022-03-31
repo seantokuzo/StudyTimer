@@ -794,4 +794,17 @@ body {
   body {
     font-size: .35rem;
   }
+
+  .timer-div {
+    transform: scale(.7);
+  }
+
+  .set-timer-div {
+    transform: scale(.7);
+    margin: -2.5rem 0;
+  }
+
+  .slider {
+    transform: scale(.7);
+  }
 }
