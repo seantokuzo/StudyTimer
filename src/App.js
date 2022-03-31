@@ -104,6 +104,15 @@ function App() {
 
   // SWITCH SESSION TYPE (RED BUTTON)
   function switchSessionType() {
+    setTimerActive(false)
+    if (myInterval) {
+      myInterval.cancel()
+    }
+    if (isBreak) {
+      setTimeLeft(breakLength * 60)
+    } else {
+      setTimeLeft(studyLength * 60)
+    }
     if (!isBreak) switchToBreakSound.play()
     if (isBreak) switchToStudySound.play()
 
@@ -121,7 +130,7 @@ function App() {
       accurateInterval(() => {
         decrementTimeLeft()
         // checkTimerStatus()
-      }, 10)
+      }, 1000)
     )
   }
 

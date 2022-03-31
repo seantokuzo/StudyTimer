@@ -229,7 +229,7 @@ body {
   appearance: none;
   width: 90%;
   height: 15px;
-  background: rgb(102, 102, 102);
+  background: rgb(80, 80, 80);
   outline: none;
   opacity: 0.8;
   -webkit-transition: 0.2s;
@@ -243,7 +243,7 @@ body {
   appearance: none;
   width: 25px;
   height: 25px;
-  background: rgb(102, 102, 102);
+  background: rgb(75, 75, 75);
   cursor: pointer;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
@@ -260,7 +260,7 @@ body {
 }
 
 .slider:hover {
-  opacity: 0.7;
+  opacity: 1;
 }
 
 .slider::-webkit-slider-thumb:active,
