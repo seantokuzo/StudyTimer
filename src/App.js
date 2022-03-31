@@ -33,6 +33,7 @@ function App() {
   const [isBreak, setIsBreak] = useState(false)
   const [timerActive, setTimerActive] = useState(false)
   const [myInterval, setMyInterval] = useState('')
+  const [testMode, setTestMode] = useState(false)
   const [soundOn, setSoundOn] = useState(true)
 
   // BREAK LENGTH MUST BE LESS THAT STUDY LENGTH
@@ -71,6 +72,12 @@ function App() {
       setIsBreak((prevIsBreak) => !prevIsBreak)
     }
   }, [timeLeft])
+
+  function toggleTestMode() {
+    setTestMode(!testMode)
+    setTimerActive(false)
+    if (myInterval) myInterval.cancel()
+  }
 
   function toggleSound() {
     if (soundOn) {
@@ -124,13 +131,15 @@ function App() {
     setTimeLeft((prevTimeLeft) => prevTimeLeft - 1)
   }
 
+  const intervalLength = testMode ? 10 : 1000
+
   // START THE TIMER USING ACCURATE INTERVAL HELPER FUNCTION
   function startTimer() {
     setMyInterval(
       accurateInterval(() => {
         decrementTimeLeft()
         // checkTimerStatus()
-      }, 1000)
+      }, intervalLength)
     )
   }
 
@@ -339,11 +348,38 @@ function App() {
     <div className="sesh-switch-div">
       <div className="button-div red-btn-out" onClick={switchSessionType}>
         <div className="button-inner-div red-btn-in">
-          <i className="fa-solid fa-shuffle switch-icon"></i>
+          <i className="fa-solid fa-shuffle abso-btn-icon"></i>
         </div>
       </div>
-      <p className="sesh-switch-phrase">
+      <p className="abso-btn-text">
         {isBreak ? 'Switch to study session' : 'Switch to break time'}
+      </p>
+    </div>
+  )
+
+  const testButton = (
+    <div className="test-btn-div">
+      <div
+        className={
+          testMode
+            ? 'button-div red-btn-out test-btn'
+            : 'button-div grey-btn-out test-btn'
+        }
+        id="reset"
+        onClick={toggleTestMode}
+      >
+        <div
+          className={
+            testMode
+              ? 'button-inner-div red-btn-in'
+              : 'button-inner-div grey-btn-in'
+          }
+        >
+          <i className="fa-solid fa-flask-vial abso-btn-icon"></i>
+        </div>
+      </div>
+      <p className="abso-btn-text">
+        {testMode ? 'Test Mode Enabled' : 'Test Mode Disabled'}
       </p>
     </div>
   )
@@ -499,6 +535,7 @@ function App() {
   return (
     <div className="app-container">
       {sessionSwitchButton}
+      {testButton}
       {soundIconEl}
       <h1 className="title">Study Session Timer</h1>
       {timerHtml}

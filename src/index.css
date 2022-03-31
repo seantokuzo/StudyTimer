@@ -286,11 +286,11 @@ body {
 /* ********************************* */
 .sesh-switch-div {
   position: absolute;
-  left: 0%;
-  top: 0%;
+  left: 1.5%;
+  top: 1.5%;
 
   margin: 0.25rem 0.25rem;
-  padding: 1rem 0 0 1rem;
+  /* padding: 1rem 0 0 1rem; */
 
   display: flex;
   align-items: center;
@@ -298,7 +298,32 @@ body {
   /* border: 1px solid blueviolet; */
 }
 
-.sesh-switch-phrase {
+/* ********************************* */
+/* *          TEST BUTTON          * */
+/* ********************************* */
+
+.test-btn-div {
+    position: absolute;
+    left: 1.5%;
+    bottom: 2%;
+    
+    margin: 0.25rem 0.25rem;
+    
+    display: flex;
+    align-items: center;
+}
+
+/* **************************************** */
+/* *  SWITCH / TEST BUTTON / TEXT STYLES  * */
+/* **************************************** */
+
+.abso-btn-icon {
+  font-size: 1.25em;
+  color: rgb(255, 255, 255, .8);
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
+.abso-btn-text {
   width: min-content;
   text-align: start;
   line-height: 1.5em;
@@ -312,11 +337,11 @@ body {
 /* *     SOUND ON/OFF CONTROL      * */
 /* ********************************* */
 .sound-icon-div {
+  width: 100px;
   height: 155px;
   position: absolute;
-  top: 11%;
-  left: 94%;
-  transform: translate(-50%, -50%);
+  top: 3%;
+  right: 2%;
 
   cursor: pointer;
   
@@ -539,12 +564,20 @@ body {
   .sound-icon {
     font-size: 3em;
   }
+
+  .btn-icon {
+    font-size: 2.5em;
+  }
+
+  .abso-btn-icon {
+    font-size: 1.75em;
+  }
 }
 
 @media(max-width: 1100px) {
-  body {
-    font-size: .5;
-  }
+  /* body {
+    font-size: .55rem;
+  } */
 
   .timer-div {
     min-width: 440px;
@@ -564,15 +597,16 @@ body {
     width: 36px;
     height: 36px;
   }
+
+  .button-inner-div:active {
+    width: 38px;
+    height: 38px;
+  }
 }
 
 @media(max-width: 900px) {
   body {
-    font-size: .45em;
-  }
-
-  .sound-icon-div {
-    top: 11%;
+    font-size: .5em;
   }
 
   .sound-icon {
@@ -593,16 +627,6 @@ body {
     min-width: 210px;
     min-height: 210px;
   }
-  
-  .button-div {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .button-inner-div {
-    width: 36px;
-    height: 36px;
-  }
 }
 
 @media (max-width: 650px) {
@@ -619,7 +643,7 @@ body {
     min-width: 400px;
 
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 90%;
     transform: translate(-50%, -50%) rotate(90deg);
 
@@ -627,25 +651,20 @@ body {
     margin-bottom: 1rem;
   }
 
-  .sesh-switch-div {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 1.5em 0 0 1.5em;
-  }
-
-  .red-btn-out {
+  .btn-div {
     width: 35px;
     height: 35px;
   }
   
-  .red-btn-in {
+  .btn-inner-div {
     width: 32px;
     height: 32px;
   }
 
-  .sound-icon-div {
-    left: 90%;
-  }
+    .button-inner-div:active {
+      width: 33px;
+      height: 33px;
+    }
   
   .sesh-switch-phrase {
     width: min-content;
@@ -700,6 +719,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+  }
+
+  .btn-icon {
+    font-size: 2.5em;
+  }
+  
+  .abso-btn-icon {
+    font-size: 1.75em;
+  }
+
+  .abso-btn-text {
+    font-size: 1.35em;
+    margin-left: .75em;
   }
 
   @keyframes inc-num {
@@ -758,9 +790,8 @@ body {
   }
 }
 
-@media (max-width: 380px) {
-  .sound-icon-div {
-    top: 15%;
-    left: 89%;
+@media (max-width: 400px) {
+  body {
+    font-size: .35rem;
   }
 }
