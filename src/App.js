@@ -13,17 +13,17 @@ import warningSFX from './sounds/smb_warning.m4a'
 import accurateInterval from './accurateInterval'
 
 function App() {
-  const incrementSound = new Audio(coinSFX)
-  const decrementSound = new Audio(bumpSFX)
-  const switchToBreakSound = new Audio(oneUpSFX)
-  const switchToStudySound = new Audio(powerUpSFX)
-  const warningSound = new Audio(warningSFX)
-  const pauseSound = new Audio(pauseSFX)
-  const restartSound = new Audio(restartSFX)
-  const breakOverSound = new Audio(breakOverSFX)
-  const studyOverSound = new Audio(studyOverSFX)
-  const startBreakSound = new Audio(startBreakSFX)
-  const startStudySound = new Audio(startStudySFX)
+  let incrementSound = new Audio(coinSFX)
+  let decrementSound = new Audio(bumpSFX)
+  let switchToBreakSound = new Audio(oneUpSFX)
+  let switchToStudySound = new Audio(powerUpSFX)
+  let warningSound = new Audio(warningSFX)
+  let pauseSound = new Audio(pauseSFX)
+  let restartSound = new Audio(restartSFX)
+  let breakOverSound = new Audio(breakOverSFX)
+  let studyOverSound = new Audio(studyOverSFX)
+  let startBreakSound = new Audio(startBreakSFX)
+  let startStudySound = new Audio(startStudySFX)
   const [breakLength, setBreakLength] = useState(5)
   const [studyLength, setStudyLength] = useState(25)
   const [animateBreak, setAnimateBreak] = useState({ up: false, down: false })
@@ -33,6 +33,7 @@ function App() {
   const [isBreak, setIsBreak] = useState(false)
   const [timerActive, setTimerActive] = useState(false)
   const [myInterval, setMyInterval] = useState('')
+  const [soundOn, setSoundOn] = useState(true)
 
   // BREAK LENGTH MUST BE LESS THAT STUDY LENGTH
   // SWITCH TIME LEFT FROM BREAK/STUDY ON SESSION SWITCH
@@ -70,6 +71,36 @@ function App() {
       setIsBreak((prevIsBreak) => !prevIsBreak)
     }
   }, [timeLeft])
+
+  function toggleSound() {
+    if (soundOn) {
+      incrementSound.volume = 0
+      decrementSound.volume = 0
+      switchToBreakSound.volume = 0
+      switchToStudySound.volume = 0
+      warningSound.volume = 0
+      pauseSound.volume = 0
+      restartSound.volume = 0
+      breakOverSound.volume = 0
+      studyOverSound.volume = 0
+      startBreakSound.volume = 0
+      startStudySound.volume = 0
+      setSoundOn(false)
+    } else {
+      incrementSound.volume = 1
+      decrementSound.volume = 1
+      switchToBreakSound.volume = 1
+      switchToStudySound.volume = 1
+      warningSound.volume = 1
+      pauseSound.volume = 1
+      restartSound.volume = 1
+      breakOverSound.volume = 1
+      studyOverSound.volume = 1
+      startBreakSound.volume = 1
+      startStudySound.volume = 1
+      setSoundOn(true)
+    }
+  }
 
   // SWITCH SESSION TYPE (RED BUTTON)
   function switchSessionType() {
@@ -281,6 +312,19 @@ function App() {
     color: timeLeft < 60 ? 'var(--warning-red)' : 'white'
   }
 
+  const soundIconEl = (
+    <div className="sound-icon-div" onClick={toggleSound}>
+      <i
+        className={
+          soundOn
+            ? 'fa-solid fa-volume-high sound-icon'
+            : 'fa-solid fa-volume-xmark sound-icon'
+        }
+      ></i>
+      {!soundOn && <p id="coming-soon">Coming Soon! I Swear!</p>}
+    </div>
+  )
+
   // SESSION SWITCH COMPONENT - RED BUTTON AND PHRASE
   const sessionSwitchButton = (
     <div className="sesh-switch-div">
@@ -445,8 +489,9 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1 className="title">Study Session Timer</h1>
       {sessionSwitchButton}
+      {soundIconEl}
+      <h1 className="title">Study Session Timer</h1>
       {timerHtml}
       {/* {timerControls} */}
       {/* {setTimers} */}

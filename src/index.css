@@ -309,6 +309,39 @@ body {
 }
 
 /* ********************************* */
+/* *     SOUND ON/OFF CONTROL      * */
+/* ********************************* */
+.sound-icon-div {
+  height: 155px;
+  position: absolute;
+  top: 11%;
+  left: 94%;
+  transform: translate(-50%, -50%);
+
+  cursor: pointer;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  /* border: 1px solid aqua; */
+}
+
+.sound-icon {
+  /* width: 50px;
+  height: 50px; */
+  font-size: 2.5em;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+#coming-soon {
+  margin: 10px 0 0 0;
+  line-height: 1.5em;
+  width: min-content;
+  color: rgba(255, 255, 255, 0.1);
+}
+
+/* ********************************* */
 /* *        BUTTONS CLASSES        * */
 /* ********************************* */
 .btns-container {
@@ -352,8 +385,8 @@ body {
 
 .btn-icon {
   font-size: 2em;
-  color: rgb(255, 255, 255);
-  text-shadow: 0 0 7.5px rgba(0, 0, 0, 0.8);
+  color: rgb(255, 255, 255, .8);
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
 }
 
 .btn-icon:active {
@@ -503,36 +536,47 @@ body {
     width: 22vw;
     height: 22vw;
   }
+  .sound-icon {
+    font-size: 3em;
+  }
+}
 
-  @media(max-width: 1100px) {
-    body {
-      font-size: .5;
-    }
+@media(max-width: 1100px) {
+  body {
+    font-size: .5;
+  }
 
-    .timer-div {
-      min-width: 440px;
-    }
+  .timer-div {
+    min-width: 440px;
+  }
 
-    .set-timer-inner-div {
-      min-width: 250px;
-      min-height: 250px;
-    }
+  .set-timer-inner-div {
+    min-width: 250px;
+    min-height: 250px;
+  }
 
-    .button-div {
-      width: 40px;
-      height: 40px;
-    }
-    
-    .button-inner-div {
-      width: 36px;
-      height: 36px;
-    }
+  .button-div {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .button-inner-div {
+    width: 36px;
+    height: 36px;
   }
 }
 
 @media(max-width: 900px) {
   body {
     font-size: .45em;
+  }
+
+  .sound-icon-div {
+    top: 11%;
+  }
+
+  .sound-icon {
+    font-size: 4em;
   }
 
   .timer-div {
@@ -597,6 +641,10 @@ body {
   .red-btn-in {
     width: 32px;
     height: 32px;
+  }
+
+  .sound-icon-div {
+    left: 90%;
   }
   
   .sesh-switch-phrase {
@@ -707,5 +755,12 @@ body {
     100% {
       margin-right: 0;
     }
+  }
+}
+
+@media (max-width: 400px) {
+  .sound-icon-div {
+    top: 10%;
+    left: 89%;
   }
 }
