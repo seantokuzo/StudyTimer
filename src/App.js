@@ -48,6 +48,89 @@ function App() {
     }
   }, [studyLength, breakLength, isBreak])
 
+  // WHEN TIMER RUNNING - CHECK THE TIMER'S STATUS EVERY SECOND
+  useEffect(() => {
+    if (timeLeft === 59 && timerActive) {
+      warningSound.play()
+    }
+    // this.warning(timer)
+    // this.buzzer(timer)
+    if (timeLeft < 0) {
+      if (myInterval) {
+        myInterval.cancel()
+      }
+      if (isBreak) {
+        breakOverSound.play()
+        setTimeLeft(studyLength * 60)
+      } else {
+        studyOverSound.play()
+        setTimeLeft(breakLength * 60)
+      }
+      startTimer()
+      setIsBreak((prevIsBreak) => !prevIsBreak)
+    }
+  }, [timeLeft])
+
+  // SWITCH SESSION TYPE (RED BUTTON)
+  function switchSessionType() {
+    if (!isBreak) switchToBreakSound.play()
+    if (isBreak) switchToStudySound.play()
+
+    setIsBreak(!isBreak)
+  }
+
+  // DECREMENT TIMELEFT WHEN TIMER RUNNING
+  function decrementTimeLeft() {
+    setTimeLeft((prevTimeLeft) => prevTimeLeft - 1)
+  }
+
+  // START THE TIMER USING ACCURATE INTERVAL HELPER FUNCTION
+  function startTimer() {
+    setMyInterval(
+      accurateInterval(() => {
+        decrementTimeLeft()
+        // checkTimerStatus()
+      }, 10)
+    )
+  }
+
+  // HANDLE PLAY/PAUSE BUTTON PRESS
+  function handlePlayPause() {
+    // console.log(timerActive)
+    if (!timerActive) {
+      setTimerActive(true)
+      if (isBreak) {
+        startBreakSound.play()
+      } else {
+        startStudySound.play()
+      }
+      startTimer()
+      return
+    } else {
+      setTimerActive(false)
+      pauseSound.play()
+      if (myInterval) {
+        myInterval.cancel()
+      }
+    }
+  }
+
+  // HANDLE THE RESET BUTTON
+  function handleRestartTimer() {
+    // console.log('restart timer')
+    setTimerActive(false)
+    restartSound.play()
+    if (myInterval) {
+      myInterval.cancel()
+    }
+    if (isBreak) {
+      setTimeLeft(breakLength * 60)
+    } else {
+      setTimeLeft(studyLength * 60)
+    }
+  }
+
+  // BREAK LENGTH CHANGE HANDLERS
   function incrementBreak() {
     if (disableButtons || timerActive) return
     if (breakLength < 60 && breakLength < studyLength) {
@@ -93,7 +176,12 @@ function App() {
     }
     return
   }
+  // BREAK LENGTH SLIDER
+  function handleBreakSlider(e) {
+    setBreakLength(parseInt(e.target.value, 10))
+  }
 
+  // STUDY LENGTH CHANGE HANDLERS
   function incrementStudy() {
     if (disableButtons || timerActive) return
     if (studyLength < 60) {
@@ -140,6 +228,37 @@ function App() {
     return
   }
 
+  // STUDY LENGTH SLIDER
+  function handleStudySlider(e) {
+    setStudyLength(parseInt(e.target.value, 10))
+  }
+
+  // GET MINUTES LEFT FROM TIMELEFT
+  function timeLeftToMinutes(time) {
+    const minutes = Math.floor(time / 60)
+    if (minutes < 10) {
+      return `0${minutes}`
+    } else return minutes
+  }
+
+  // GET SECONDS LEFT FROM TIMELEFT
+  function timeLeftToSeconds(time) {
+    const minutes = Math.floor(time / 60)
+    let seconds = time - minutes * 60
+    // console.log(seconds)
+    if (seconds < 10) {
+      return `0${seconds}`
+    } else return seconds
+  }
+
+  // DETERMINE ICON FOR PLAY/PAUSE BUTTON
+  const playOrPause = timerActive ? (
+    <i className="fa-solid fa-pause btn-icon"></i>
+  ) : (
+    <i className="fa-solid fa-play btn-icon"></i>
+  )
+
+  // DYNAMIC ANIMATIONS FOR CHANGING BREAK LENGTH
   const breakAnimation = {
     animation: animateBreak.up
       ? 'inc-num 300ms ease-out'
@@ -148,6 +267,7 @@ function App() {
       : 'none'
   }
 
+  // DYNAMIC ANIMATIONS FOR CHANGING STUDY LENGTH
   const studyAnimation = {
     animation: animateStudy.up
       ? 'inc-num 500ms ease-out'
@@ -156,10 +276,69 @@ function App() {
       : 'none'
   }
 
-  function handleBreakSlider(e) {
-    setBreakLength(parseInt(e.target.value, 10))
+  // TURN TIMER COLOR RED WHEN LESS THAN 60 SECONDS LEFT
+  const warningStyle = {
+    color: timeLeft < 60 ? 'var(--warning-red)' : 'white'
   }
 
+  // SESSION SWITCH COMPONENT - RED BUTTON AND PHRASE
+  const sessionSwitchButton = (
+    <div className="sesh-switch-div">
+      <div className="button-div red-btn-out" onClick={switchSessionType}>
+        <div className="button-inner-div red-btn-in">
+          <i className="fa-solid fa-shuffle switch-icon"></i>
+        </div>
+      </div>
+      <p className="sesh-switch-phrase">
+        {isBreak ? 'Switch to study session' : 'Switch to break time'}
+      </p>
+    </div>
+  )
+
+  const timerHtml = (
+    <div className="timer-div">
+      <div className="timer-inner-div">
+        <h1 className="timer-title" id="timer-label">
+          {isBreak ? 'BREAK TIME' : 'STUDY TIME'}
+        </h1>
+        <h5 className="timer-phrase">
+          {timerActive
+            ? 'INITIATED'
+            : isBreak
+            ? 'TAKE A LOAD OFF'
+            : "LET'S GET IT!"}
+        </h5>
+        <div className="the-timer-screen">
+          <h2 className="the-timer-el" id="time-left" style={warningStyle}>
+            {timeLeftToMinutes(timeLeft)}:{timeLeftToSeconds(timeLeft)}
+          </h2>
+        </div>
+      </div>
+    </div>
+  )
+
+  const timerControls = (
+    <div className="timer-controls-div">
+      <div
+        className="button-div grey-btn-out timer-btn"
+        id="start_stop"
+        onClick={handlePlayPause}
+      >
+        <div className="button-inner-div grey-btn-in">{playOrPause}</div>
+      </div>
+      <div
+        className="button-div grey-btn-out timer-btn"
+        id="reset"
+        onClick={handleRestartTimer}
+      >
+        <div className="button-inner-div grey-btn-in">
+          <i className="fa-solid fa-arrow-rotate-left btn-icon"></i>
+        </div>
+      </div>
+    </div>
+  )
+
+  // BREAK LENGTH CHANGE COMPONENT
   const setBreakTimerHtml = (
     <div className="set-timer-div std-break">
       <h4 className="length-label" id="break-label">
@@ -207,10 +386,7 @@ function App() {
     </div>
   )
 
-  function handleStudySlider(e) {
-    setStudyLength(parseInt(e.target.value, 10))
-  }
-
+  // STUDY LENGTH CHANGE COMPONENT
   const setStudyTimerHtml = (
     <div className="set-timer-div std-study">
       <h4 className="length-label">Study Length</h4>
@@ -252,184 +428,11 @@ function App() {
     </div>
   )
 
+  // DIV HOLDING BOTH SESSION LENGTH CHANGE COMPONENTS
   const setTimers = (
     <div className="set-timers-div">
       {setBreakTimerHtml}
       {setStudyTimerHtml}
-    </div>
-  )
-
-  function switchSessionType() {
-    if (!isBreak) switchToBreakSound.play()
-    if (isBreak) switchToStudySound.play()
-
-    setIsBreak(!isBreak)
-  }
-
-  const sessionSwitchButton = (
-    <div className="sesh-switch-div">
-      <div className="button-div red-btn-out" onClick={switchSessionType}>
-        <div className="button-inner-div red-btn-in">
-          <i className="fa-solid fa-shuffle switch-icon"></i>
-        </div>
-      </div>
-      <p className="sesh-switch-phrase">
-        {isBreak ? 'Switch to study session' : 'Switch to break time'}
-      </p>
-    </div>
-  )
-
-  const playOrPause = timerActive ? (
-    <i className="fa-solid fa-pause btn-icon"></i>
-  ) : (
-    <i className="fa-solid fa-play btn-icon"></i>
-  )
-
-  useEffect(() => {
-    if (timeLeft === 59 && timerActive) {
-      warningSound.play()
-    }
-    // this.warning(timer)
-    // this.buzzer(timer)
-    if (timeLeft < 0) {
-      if (myInterval) {
-        myInterval.cancel()
-      }
-      if (isBreak) {
-        breakOverSound.play()
-        setTimeLeft(studyLength * 60)
-      } else {
-        studyOverSound.play()
-        setTimeLeft(breakLength * 60)
-      }
-      startTimer()
-      setIsBreak((prevIsBreak) => !prevIsBreak)
-    }
-  }, [timeLeft])
-
-  // function checkTimerStatus() {
-  //   if (timeLeft === 59 && timerActive) {
-  //     warningSound.play()
-  //   }
-  //   if (timeLeft < 0) {
-  //     if (myInterval) {
-  //       myInterval.cancel()
-  //     }
-  //     if (isBreak) {
-  //       breakOverSound.play()
-  //       setTimeLeft(studyLength * 60)
-  //     } else {
-  //       studyOverSound.play()
-  //       setTimeLeft(breakLength * 60)
-  //     }
-  //     startTimer()
-  //     setIsBreak((prevIsBreak) => !prevIsBreak)
-  //   }
-  // }
-
-  function decrementTimeLeft() {
-    setTimeLeft((prevTimeLeft) => prevTimeLeft - 1)
-  }
-
-  function startTimer() {
-    setMyInterval(
-      accurateInterval(() => {
-        decrementTimeLeft()
-        // checkTimerStatus()
-      }, 10)
-    )
-  }
-
-  function handlePlayPause() {
-    // console.log(timerActive)
-    if (!timerActive) {
-      setTimerActive(true)
-      if (isBreak) {
-        startBreakSound.play()
-      } else {
-        startStudySound.play()
-      }
-      startTimer()
-      return
-    } else {
-      setTimerActive(false)
-      pauseSound.play()
-      if (myInterval) {
-        myInterval.cancel()
-      }
-    }
-  }
-
-  function handleRestartTimer() {
-    // console.log('restart timer')
-    setTimerActive(false)
-    restartSound.play()
-    if (myInterval) {
-      myInterval.cancel()
-    }
-    if (isBreak) {
-      setTimeLeft(breakLength * 60)
-    } else {
-      setTimeLeft(studyLength * 60)
-    }
-  }
-
-  function timeLeftToMinutes(time) {
-    const minutes = Math.floor(time / 60)
-    if (minutes < 10) {
-      return `0${minutes}`
-    } else return minutes
-  }
-
-  function timeLeftToSeconds(time) {
-    const minutes = Math.floor(time / 60)
-    let seconds = time - minutes * 60
-    // console.log(seconds)
-    if (seconds < 10) {
-      return `0${seconds}`
-    } else return seconds
-  }
-
-  const warningStyle = {
-    color: timeLeft < 60 ? 'var(--warning-red)' : 'white'
-  }
-
-  const timerHtml = (
-    <div className="timer-div">
-      <div className="timer-inner-div">
-        <h1 className="timer-title" id="timer-label">
-          {isBreak ? 'BREAK TIME' : 'STUDY TIME'}
-        </h1>
-        <h5 className="timer-phrase">
-          {isBreak ? 'TAKE A LOAD OFF' : "LET'S GET IT!"}
-        </h5>
-        <div className="the-timer-screen">
-          <h2 className="the-timer-el" id="time-left" style={warningStyle}>
-            {timeLeftToMinutes(timeLeft)}:{timeLeftToSeconds(timeLeft)}
-          </h2>
-        </div>
-      </div>
-    </div>
-  )
-
-  const timerControls = (
-    <div className="timer-controls-div">
-      <div
-        className="button-div grey-btn-out timer-btn"
-        id="start_stop"
-        onClick={handlePlayPause}
-      >
-        <div className="button-inner-div grey-btn-in">{playOrPause}</div>
-      </div>
-      <div
-        className="button-div grey-btn-out timer-btn"
-        id="reset"
-        onClick={handleRestartTimer}
-      >
-        <div className="button-inner-div grey-btn-in">
-          <i className="fa-solid fa-arrow-rotate-left btn-icon"></i>
-        </div>
-      </div>
     </div>
   )
 
@@ -446,29 +449,28 @@ function App() {
 
 export default App
 
+// SET BREAK AND STUDY LENGTH TO LOCAL STORAGE
+// useEffect(() => {
+//   localStorage.setItem('breakLength', JSON.stringify(breakLength))
+// }, [breakLength])
+// useEffect(() => {
+//   localStorage.setItem('studyLength', JSON.stringify(studyLength))
+// }, [studyLength])
 
-  // SET BREAK AND STUDY LENGTH TO LOCAL STORAGE
-  // useEffect(() => {
-  //   localStorage.setItem('breakLength', JSON.stringify(breakLength))
-  // }, [breakLength])
-  // useEffect(() => {
-  //   localStorage.setItem('studyLength', JSON.stringify(studyLength))
-  // }, [studyLength])
-
-  // IF IN LOCAL STORAGE, GET AND SET BREAK AND STUDY LENGTHS
-  // useEffect(() => {
-  //   const localBreakLength = JSON.parse(localStorage.getItem('breakLength'))
-  //   const localStudyLength = JSON.parse(localStorage.getItem('studyLength'))
-  //   if (localBreakLength) {
-  //     setBreakLength(localBreakLength)
-  //   }
-  //   if (localStudyLength) {
-  //     setStudyLength(localStudyLength)
-  //   }
-  //   if (!localBreakLength) {
-  //     setBreakLength(5)
-  //   }
-  //   if (!localStudyLength) {
-  //     setStudyLength(25)
-  //   }
-  // }, [])
+// IF IN LOCAL STORAGE, GET AND SET BREAK AND STUDY LENGTHS
+// useEffect(() => {
+//   const localBreakLength = JSON.parse(localStorage.getItem('breakLength'))
+//   const localStudyLength = JSON.parse(localStorage.getItem('studyLength'))
+//   if (localBreakLength) {
+//     setBreakLength(localBreakLength)
+//   }
+//   if (localStudyLength) {
+//     setStudyLength(localStudyLength)
+//   }
+//   if (!localBreakLength) {
+//     setBreakLength(5)
+//   }
+//   if (!localStudyLength) {
+//     setStudyLength(25)
+//   }
+// }, [])
