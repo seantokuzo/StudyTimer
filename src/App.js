@@ -295,28 +295,7 @@ function App() {
     </div>
   )
 
-  const timerHtml = (
-    <div className="timer-div">
-      <div className="timer-inner-div">
-        <h1 className="timer-title" id="timer-label">
-          {isBreak ? 'BREAK TIME' : 'STUDY TIME'}
-        </h1>
-        <h5 className="timer-phrase">
-          {timerActive
-            ? 'INITIATED'
-            : isBreak
-            ? 'TAKE A LOAD OFF'
-            : "LET'S GET IT!"}
-        </h5>
-        <div className="the-timer-screen">
-          <h2 className="the-timer-el" id="time-left" style={warningStyle}>
-            {timeLeftToMinutes(timeLeft)}:{timeLeftToSeconds(timeLeft)}
-          </h2>
-        </div>
-      </div>
-    </div>
-  )
-
+  // TIMER CONTROLS
   const timerControls = (
     <div className="timer-controls-div">
       <div
@@ -338,47 +317,73 @@ function App() {
     </div>
   )
 
+  // THE TIMER
+  const timerHtml = (
+    <div className="timer-div">
+      <div className="timer-inner-div">
+        <h1 className="timer-title" id="timer-label">
+          {isBreak ? 'BREAK TIME' : 'STUDY TIME'}
+        </h1>
+        <h5 className="timer-phrase">
+          {timerActive
+            ? 'INITIATED'
+            : isBreak
+            ? 'TAKE A LOAD OFF'
+            : "LET'S GET IT!"}
+        </h5>
+        <div className="the-timer-screen">
+          <h2 className="the-timer-el" id="time-left" style={warningStyle}>
+            {timeLeftToMinutes(timeLeft)}:{timeLeftToSeconds(timeLeft)}
+          </h2>
+        </div>
+        {timerControls}
+      </div>
+    </div>
+  )
+
   // BREAK LENGTH CHANGE COMPONENT
   const setBreakTimerHtml = (
     <div className="set-timer-div std-break">
-      <h4 className="length-label" id="break-label">
-        Break Length
-      </h4>
-      <div className="set-timer-controls-div">
-        <input
-          type="range"
-          min="1"
-          max={studyLength}
-          value={breakLength}
-          className="slider"
-          id="myRange"
-          onChange={handleBreakSlider}
-          disabled={disableButtons || timerActive ? true : false}
-        />
-        <div className="timer-value-div">
-          <h3
-            id="break-length"
-            className="timer-value number"
-            style={breakAnimation}
-          >
-            {breakLength}
-          </h3>
-        </div>
-        <div className="btns-div">
-          <div className="button-div green-btn-out" onClick={incrementBreak}>
-            <div className="button-inner-div green-btn-in">
-              <i
-                id="break-increment"
-                className="fa-solid fa-angle-up btn-icon"
-              ></i>
-            </div>
+      <div className="set-timer-inner-div">
+        <h4 className="length-label" id="break-label">
+          Break Length
+        </h4>
+        <div className="set-timer-controls-div">
+          <input
+            type="range"
+            min="1"
+            max={studyLength}
+            value={breakLength}
+            className="slider"
+            id="myRange"
+            onChange={handleBreakSlider}
+            disabled={disableButtons || timerActive ? true : false}
+          />
+          <div className="timer-value-screen">
+            <h3
+              id="break-length"
+              className="timer-value number"
+              style={breakAnimation}
+            >
+              {breakLength}
+            </h3>
           </div>
-          <div className="button-div blue-btn-out" onClick={decrementBreak}>
-            <div className="button-inner-div blue-btn-in">
-              <i
-                id="break-decrement"
-                className="fa-solid fa-angle-down btn-icon"
-              ></i>
+          <div className="btns-container">
+            <div className="button-div green-btn-out" onClick={incrementBreak}>
+              <div className="button-inner-div green-btn-in">
+                <i
+                  id="break-increment"
+                  className="fa-solid fa-angle-up btn-icon"
+                ></i>
+              </div>
+            </div>
+            <div className="button-div blue-btn-out" onClick={decrementBreak}>
+              <div className="button-inner-div blue-btn-in">
+                <i
+                  id="break-decrement"
+                  className="fa-solid fa-angle-down btn-icon"
+                ></i>
+              </div>
             </div>
           </div>
         </div>
@@ -389,38 +394,40 @@ function App() {
   // STUDY LENGTH CHANGE COMPONENT
   const setStudyTimerHtml = (
     <div className="set-timer-div std-study">
-      <h4 className="length-label">Study Length</h4>
-      <div className="set-timer-controls-div">
-        <input
-          type="range"
-          min="1"
-          max="60"
-          value={studyLength}
-          className="slider"
-          id="myRange"
-          onChange={handleStudySlider}
-          disabled={disableButtons || timerActive ? true : false}
-        />
-        <div className="timer-value-div">
-          <h3 className="timer-value number" style={studyAnimation}>
-            {studyLength}
-          </h3>
-        </div>
-        <div className="btns-div">
-          <div className="button-div yellow-btn-out" onClick={incrementStudy}>
-            <div className="button-inner-div yellow-btn-in">
-              <i
-                id="session-increment"
-                className="fa-solid fa-angle-up btn-icon"
-              ></i>
-            </div>
+      <div className="set-timer-inner-div">
+        <h4 className="length-label">Study Length</h4>
+        <div className="set-timer-controls-div">
+          <input
+            type="range"
+            min="1"
+            max="60"
+            value={studyLength}
+            className="slider"
+            id="myRange"
+            onChange={handleStudySlider}
+            disabled={disableButtons || timerActive ? true : false}
+          />
+          <div className="timer-value-screen">
+            <h3 className="timer-value number" style={studyAnimation}>
+              {studyLength}
+            </h3>
           </div>
-          <div className="button-div orange-btn-out" onClick={decrementStudy}>
-            <div className="button-inner-div orange-btn-in">
-              <i
-                id="session-decrement"
-                className="fa-solid fa-angle-down btn-icon"
-              ></i>
+          <div className="btns-container">
+            <div className="button-div yellow-btn-out" onClick={incrementStudy}>
+              <div className="button-inner-div yellow-btn-in">
+                <i
+                  id="session-increment"
+                  className="fa-solid fa-angle-up btn-icon"
+                ></i>
+              </div>
+            </div>
+            <div className="button-div orange-btn-out" onClick={decrementStudy}>
+              <div className="button-inner-div orange-btn-in">
+                <i
+                  id="session-decrement"
+                  className="fa-solid fa-angle-down btn-icon"
+                ></i>
+              </div>
             </div>
           </div>
         </div>
@@ -429,20 +436,22 @@ function App() {
   )
 
   // DIV HOLDING BOTH SESSION LENGTH CHANGE COMPONENTS
-  const setTimers = (
-    <div className="set-timers-div">
-      {setBreakTimerHtml}
-      {setStudyTimerHtml}
-    </div>
-  )
+  // const setTimers = (
+  //   <div className="set-timers-div">
+  //     {setBreakTimerHtml}
+  //     {setStudyTimerHtml}
+  //   </div>
+  // )
 
   return (
     <div className="app-container">
       <h1 className="title">Study Session Timer</h1>
       {sessionSwitchButton}
       {timerHtml}
-      {timerControls}
-      {setTimers}
+      {/* {timerControls} */}
+      {/* {setTimers} */}
+      {setBreakTimerHtml}
+      {setStudyTimerHtml}
     </div>
   )
 }
