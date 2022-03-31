@@ -73,10 +73,29 @@ function App() {
     }
   }, [timeLeft])
 
+  useEffect(() => {
+    if (
+      breakLength < testModeLowerLimit() ||
+      studyLength < testModeLowerLimit()
+    ) {
+      setBreakLength(testModeLowerLimit())
+      setStudyLength(testModeLowerLimit())
+    }
+  }, [testMode, studyLength, breakLength])
+
   function toggleTestMode() {
-    setTestMode(!testMode)
-    setTimerActive(false)
     if (myInterval) myInterval.cancel()
+    if (testMode) {
+      setTestMode(false)
+      setTimerActive(false)
+      setBreakLength(5)
+      setStudyLength(25)
+    } else {
+      setTestMode(true)
+      setTimerActive(false)
+      setBreakLength(3)
+      setStudyLength(3)
+    }
   }
 
   function toggleSound() {
@@ -131,7 +150,7 @@ function App() {
     setTimeLeft((prevTimeLeft) => prevTimeLeft - 1)
   }
 
-  const intervalLength = testMode ? 10 : 1000
+  const intervalLength = testMode ? 50 : 1000
 
   // START THE TIMER USING ACCURATE INTERVAL HELPER FUNCTION
   function startTimer() {
@@ -203,9 +222,11 @@ function App() {
     return
   }
 
+  const testModeLowerLimit = () => (testMode ? 3 : 1)
+
   function decrementBreak() {
     if (disableButtons || timerActive) return
-    if (breakLength > 1) {
+    if (breakLength > testModeLowerLimit()) {
       setDisableButtons(true)
       decrementSound.play()
       setAnimateBreak((prev) => ({
@@ -256,7 +277,7 @@ function App() {
 
   function decrementStudy() {
     if (disableButtons || timerActive) return
-    if (studyLength > 1) {
+    if (studyLength > testModeLowerLimit()) {
       setDisableButtons(true)
       decrementSound.play()
       setAnimateStudy((prev) => ({
@@ -440,7 +461,7 @@ function App() {
         <div className="set-timer-controls-div">
           <input
             type="range"
-            min="1"
+            min={`${testModeLowerLimit()}`}
             max={studyLength}
             value={breakLength}
             className="slider"
@@ -488,7 +509,7 @@ function App() {
         <div className="set-timer-controls-div">
           <input
             type="range"
-            min="1"
+            min={`${testModeLowerLimit()}`}
             max="60"
             value={studyLength}
             className="slider"
