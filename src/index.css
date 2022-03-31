@@ -758,9 +758,9 @@ body {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 380px) {
   .sound-icon-div {
-    top: 10%;
+    top: 15%;
     left: 89%;
   }
 }
